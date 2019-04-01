@@ -1,0 +1,19 @@
+galaxy_info:
+  author: EPFL IDEV-FSD
+  description: Encrypt your secrets with eyaml
+  company: École Polytechnique Fédérale de Lausanne
+  license: BSD
+  min_ansible_version: 2.4
+  platforms:
+  - name: GenericUNIX
+    versions:
+    - any
+  - name: GenericLinux
+    versions:
+    - any
+  galaxy_tags:
+    - eyaml
+    - secrets
+    - public-key
+
+dependencies: []
