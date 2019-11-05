@@ -1,11 +1,13 @@
 """Decrypt secrets using Hiera's EYAML."""
 
+import re
 import subprocess
 
 from ansible.errors import AnsibleFilterError
 
 
 def eyaml(encrypted, keys):
+    encrypted = re.sub(r'\s', '', encrypted, re.MULTILINE)
     cmd = ["eyaml", "decrypt",
            "--pkcs7-private-key", keys['priv'],
            "--pkcs7-public-key", keys['pub']]
