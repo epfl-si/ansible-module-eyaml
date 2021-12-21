@@ -1,5 +1,6 @@
 """Decrypt secrets using Hiera's EYAML."""
 
+import os
 import re
 import subprocess
 
@@ -7,10 +8,13 @@ from ansible.errors import AnsibleFilterError
 
 
 def eyaml(encrypted, keys):
+    os.environ['KEYBASE_PRIVKEY'] = slurp(keys['priv'])
+    os.environ['KEYBASE_PUBKEY'] = slurp(keys['pub'])
     encrypted = re.sub(r'\s', '', encrypted, re.MULTILINE)
     cmd = ["eyaml", "decrypt",
-           "--pkcs7-private-key", keys['priv'],
-           "--pkcs7-public-key", keys['pub']]
+           "--pkcs7-private-key-env-var=KEYBASE_PRIVKEY",
+           "--pkcs7-public-key-env-var=KEYBASE_PUBKEY"]
+
     proc = subprocess.run(
         cmd + ["-s", encrypted],
         stdout=subprocess.PIPE,
@@ -31,6 +35,19 @@ def eyaml(encrypted, keys):
 
     return output
 
+
+def slurp(path):
+    if path.startswith('/keybase/'):
+        # Thank you, https://github.com/keybase/client/issues/24636 ...
+        kbfs_out = subprocess.check_output(['keybase', 'fs', 'read', path])
+        if isinstance(kbfs_out, bytes):
+            # (and additional thanks to Python for changing your mind about the return
+            # type of a core API in between versions 2 and 3)
+            return kbfs_out.decode("ascii")
+        else:
+            return kbfs_out
+    else:
+        return open(path).read()
 
 class FilterModule(object):
     def filters(self):
