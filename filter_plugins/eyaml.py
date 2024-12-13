@@ -20,7 +20,13 @@ def eyaml(encrypted, keys):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         encoding="utf-8",
-        check=True)
+        check=False)
+
+    if proc.returncode != 0:
+        raise AnsibleFilterError("Error (code %d) running %s: %s" %
+                                 (proc.returncode,
+                                  " ".join(cmd + ["-s", "..."]),
+                                  proc.stderr))
 
     # What a nice surprise: eyaml doesn't manage its exit code correctly.
     output = proc.stdout
