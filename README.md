@@ -1,6 +1,3 @@
-`epfl_idevelop.filter_eyaml`
-============================
-
 This role provides the `eyaml` filter, which lets store secrets in
 encrypted form in your Ansible playbooks and roles.
 
