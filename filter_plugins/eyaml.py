@@ -1,5 +1,6 @@
 """Decrypt secrets using Hiera's EYAML."""
 
+import functools
 import os
 import re
 import subprocess
@@ -41,7 +42,7 @@ def eyaml(encrypted, keys):
 
     return output
 
-
+@functools.cache
 def slurp(path):
     if path.startswith('/keybase/'):
         # Thank you, https://github.com/keybase/client/issues/24636 ...
